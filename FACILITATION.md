@@ -68,6 +68,18 @@ agent follows, not a program."
 
 ## Step 1 — `/speckit-constitution`
 
+**What's a "principle"?** The argument text below is three principles, back
+to back. A principle is a non-negotiable, project-wide rule — not a feature
+requirement (that's `spec.md`'s job, in Step 2) and not an implementation
+choice (that's `plan.md`'s job, in Step 3). Each one here follows the same
+shape: **a short name**, a colon, then **the actual rule stated so it's
+checkable** — "smallest implementation," "must be phrased so it can pass or
+fail," "in-memory storage is fine" are all concrete enough that a later
+command can evaluate a design against them and say pass or fail, not just
+nod along. Every command after this one reads this file before doing
+anything — that's what makes these three sentences binding rather than
+aspirational.
+
 **Type**:
 ```text
 /speckit-constitution Simplicity First: choose the smallest implementation that satisfies the spec, no speculative abstraction. Testable Requirements: every requirement must be phrased so it can pass or fail, never "should probably." Illustrative Not Production: in-memory storage is fine, no real security hardening, this is a teaching example, not a shipped service.
