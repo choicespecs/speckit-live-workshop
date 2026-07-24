@@ -191,11 +191,11 @@ grep -rn "FR-" src/
 ## Slide 20 — Live Demo: The Numbers
 **Layout:** stats
 **Visual:** Four large stat blocks.
-**Speaker notes:** These are real timing estimates from the facilitation guide for this exact workshop, not invented figures — they're what you should expect to see over the next stretch of the session.
-- ~40 min at a comfortable pace, full pipeline including optional steps
-- ~25 min for the required-only fast path (init, constitution, specify, plan, tasks, implement)
-- 4 optional commands available on top of that (clarify, checklist, analyze, converge)
+**Speaker notes:** These are real figures from the facilitation guide for this exact workshop, not invented — they're what you should expect to see over the next stretch of the session. No optional branches this time: six commands, each scripted with its exact arguments in advance, nothing left to decide live.
+- ~35 min, start to finish — six commands, nothing optional
+- 6 commands: `specify init` → constitution → specify → plan → tasks → implement
 - 1 entity, 2 endpoints — the entire scope of the demo feature
+- 0 live decisions — every command and its exact arguments scripted in advance
 
 ## Slide 21 — Up Next: Live Demo
 **Layout:** default

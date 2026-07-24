@@ -94,7 +94,7 @@ Three things to keep, before we go do this for real. [PAUSE] One: decide once, i
 
 [SLIDE 20 — Live Demo: The Numbers]
 
-Quick numbers for what you're about to sit through, straight from the facilitation guide for this exact session — nothing invented here. Roughly forty minutes at a comfortable pace for the full pipeline including the optional commands. About twenty-five minutes for the required-only fast path — init, constitution, specify, plan, tasks, implement. Four optional commands available on top of that. And the whole scope of the demo feature is one entity, two endpoints.
+Quick numbers for what you're about to sit through, straight from the facilitation guide for this exact session — nothing invented here. Roughly thirty-five minutes, start to finish, for six commands — `specify init`, constitution, specify, plan, tasks, implement — and that's it, no optional detours built into this run. Every one of those six commands is scripted with its exact arguments ahead of time, so there's zero decisions left to make live. And the whole scope of the demo feature is one entity, two endpoints.
 
 [SLIDE 21 — Up Next: Live Demo]
 
