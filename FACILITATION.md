@@ -7,8 +7,7 @@ directory, an audience watching a shared screen, and — ideally — the concept
 deck in [`presentation/`](./presentation/) already presented *before* you get
 here.
 
-Total time: roughly 48 minutes with every optional step included; the
-required-only path (Steps 0, 1, 2, 4, 6, 8) runs about 35 minutes.
+Total time: roughly 35 minutes.
 
 ## Before you start
 
@@ -32,18 +31,14 @@ no improvising required.
 
 ## Timing overview
 
-| Step | Command | ~Time | Optional? |
-|---|---|---|---|
-| 0 | `specify init` | 3 min | required |
-| 1 | `/speckit-constitution` | 5 min | required |
-| 2 | `/speckit-specify` | 7 min | required |
-| 3 | `/speckit-clarify` | 3 min | skip if no ambiguity flagged |
-| 4 | `/speckit-plan` | 6 min | required |
-| 5 | `/speckit-checklist` | 3 min | optional, time-permitting |
-| 6 | `/speckit-tasks` | 4 min | required |
-| 7 | `/speckit-analyze` | 2 min | optional but recommended — fast, read-only |
-| 8 | `/speckit-implement` | 10 min | required |
-| 9 | `/speckit-converge` (bonus) | 5 min | optional, only with time to spare |
+| Step | Command | ~Time |
+|---|---|---|
+| 0 | `specify init` | 3 min |
+| 1 | `/speckit-constitution` | 5 min |
+| 2 | `/speckit-specify` | 7 min |
+| 3 | `/speckit-plan` | 6 min |
+| 4 | `/speckit-tasks` | 4 min |
+| 5 | `/speckit-implement` | 10 min |
 
 ---
 
@@ -106,30 +101,9 @@ and a code comment; that's the traceability principle in action.
 explain the command validates its own output against a checklist before
 declaring itself done.
 
-**Check**: open `spec.md` and search for `NEEDS CLARIFICATION`. If it's
-present anywhere, run Step 3 for real. If not, say so explicitly and skip to
-Step 4 — "nothing ambiguous enough to flag this time."
-
 ---
 
-## Step 3 — `/speckit-clarify`
-
-**Only run this if Step 2 left a `NEEDS CLARIFICATION` marker in `spec.md`.**
-Otherwise, skip straight to Step 4 and say why.
-
-**Type**:
-```text
-/speckit-clarify
-```
-
-**Say**: "It asks up to five targeted questions and writes the answers back
-into `spec.md` directly, so the resolution is part of the permanent record —
-not a Slack thread nobody can find later." Answer whatever questions it asks
-about the URL shortener spec, then continue.
-
----
-
-## Step 4 — `/speckit-plan`
+## Step 3 — `/speckit-plan`
 
 **Type**:
 ```text
@@ -147,23 +121,7 @@ decided once, here, not improvised per-route later.
 
 ---
 
-## Step 5 — `/speckit-checklist`
-
-**Optional — run if time allows, skip first if the session is tight.**
-
-**Type**:
-```text
-/speckit-checklist requirement clarity and API contract completeness
-```
-
-**Say**: "This is a unit test for the *spec's writing*, not for the code — it
-checks things like 'is the short code format ever quantified? length?
-character set?' before that ambiguity becomes a coding decision made under
-pressure."
-
----
-
-## Step 6 — `/speckit-tasks`
+## Step 4 — `/speckit-tasks`
 
 **Type**:
 ```text
@@ -178,24 +136,7 @@ bottom, checking boxes as it goes."
 
 ---
 
-## Step 7 — `/speckit-analyze`
-
-**Optional but recommended — it's read-only, so there's zero risk to running
-it even under time pressure.**
-
-**Type**:
-```text
-/speckit-analyze
-```
-
-**Say**: "Before we write code, let's have the agent cross-check its own
-spec, plan, and tasks against each other and against the constitution."
-Point at the severity-graded findings table if anything comes back; a clean
-result ("zero issues") is a fine outcome to show too.
-
----
-
-## Step 8 — `/speckit-implement`
+## Step 5 — `/speckit-implement`
 
 **Type**:
 ```text
@@ -235,34 +176,6 @@ specific curl call passed, right now, not from memory."
 
 ---
 
-## Step 9 — `/speckit-converge` (bonus)
-
-**Only do this with 5 minutes to spare — strong closing beat.**
-
-**Setup — type this exact edit** (comment out the 404 handling for an
-unknown short code, without touching `tasks.md` or `spec.md`):
-```bash
-# Find the 404/not-found line for an unmatched short code in your redirect
-# route and comment it out, e.g.:
-#   if (!entry) return res.status(404).send('Not found');
-# becomes:
-#   // if (!entry) return res.status(404).send('Not found');
-```
-
-**Then type**:
-```text
-/speckit-converge
-```
-
-**Say**: "It's comparing what the spec/plan/tasks call for against what the
-code actually does right now — not git history, not memory, the current
-state." It should surface the missing-404 gap and append a new task for it,
-without touching anything else in `tasks.md`. This is the clearest possible
-demonstration that the spec is a live source of truth, not a document you
-write once and forget.
-
----
-
 ## Talking points bank (use if discussion runs long, or to fill a gap)
 
 - **"Why not just prompt an AI once?"** — that's exactly `speckit-demo`'s
@@ -291,9 +204,6 @@ write once and forget.
   before reacting — spec-kit's commands are verbose on purpose, and the
   explanation for "why did it do that" is usually in the text already on
   screen.
-- **Running low on time**: the required-only path (Steps 0, 1, 2, 4, 6, 8) is
-  a complete, honest arc in about 35 minutes — cut optional steps first,
-  never cut Step 8's live `curl` proof, that's the payoff moment.
 
 ## After the session
 
