@@ -4,8 +4,8 @@ This is your run-of-show. Everything in it assumes you're presenting from a
 terminal with Claude Code running in this directory, an audience watching a
 shared screen, and — ideally — the concept deck in
 [`presentation/`](./presentation/) already presented *before* you get here.
-Total time: roughly 40 minutes at a comfortable pace; trim the optional steps
-to fit a 25-minute slot.
+Total time: roughly 48 minutes with every optional step included; the
+required-only path (Steps 0, 1, 2, 4, 6, 8) runs about 35 minutes.
 
 ## Before you start
 
@@ -237,8 +237,11 @@ live source of truth, not a document you write once and forget.
   explanation for "why did it do that" is usually in the text already on
   screen.
 - **Running low on time**: the required-only path (Steps 0, 1, 2, 4, 6, 8) is
-  a complete, honest arc in about 25 minutes — cut optional steps first,
-  never cut Step 8's live `curl` proof, that's the payoff moment.
+  a complete, honest arc in about 35 minutes — cut optional steps first,
+  never cut Step 8's live `curl` proof, that's the payoff moment. If the slot
+  is shorter than that, trim Step 1's constitution to a single dictated
+  principle and move faster through Step 4's `research.md` narration —
+  those are the two required steps with the most room to compress.
 
 ## After the session
 

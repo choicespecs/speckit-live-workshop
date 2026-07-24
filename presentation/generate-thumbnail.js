@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+"use strict";
+
+const path  = require("path");
+const fs    = require("fs");
+const { execSync } = require("child_process");
+
+try { require.resolve("sharp"); } catch (e) {
+  console.log("Installing sharp…");
+  execSync("npm install sharp", { cwd: __dirname, stdio: "inherit" });
+}
+
+const sharp = require("sharp");
+
+const svg = `<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1b2e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#00b4cc" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#00b4cc" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1280" height="720" fill="url(#bgGradient)"/>
+  <rect x="0" y="0" width="1280" height="720" fill="url(#glow)"/>
+
+  <!-- Left accent bar -->
+  <rect x="0" y="0" width="10" height="720" fill="#00b4cc"/>
+
+  <!-- Title -->
+  <text x="640" y="300" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="120" font-weight="800" letter-spacing="-4" fill="#f1f5f9">SPEC-DRIVEN</text>
+  <text x="640" y="440" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="120" font-weight="800" letter-spacing="-4" fill="#00b4cc">DEVELOPMENT</text>
+
+  <!-- Bottom category label -->
+  <text x="640" y="655" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="500" letter-spacing="6" fill="#334155">SPEC-DRIVEN DEV</text>
+</svg>`;
+
+const svgPath = path.join(__dirname, "thumbnail.svg");
+const pngPath = path.join(__dirname, "thumbnail.png");
+
+fs.writeFileSync(svgPath, svg, "utf8");
+console.log("✓  thumbnail.svg written");
+
+sharp(Buffer.from(svg))
+  .resize(1280, 720)
+  .png()
+  .toFile(pngPath)
+  .then(() => console.log("✓  thumbnail.png written to", __dirname))
+  .catch(err => { console.error(err); process.exit(1); });
