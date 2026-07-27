@@ -46,7 +46,10 @@ no improvising required.
 
 **Type**:
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init --here --integration claude
+# If you do not have this command or run into an error
+brew install uv
+
+uvx --from git+https://github.com/github/spec-kit.git specify init --here
 ```
 
 **Say**: "Before any of this exists, spec-kit is one command. It's going to
