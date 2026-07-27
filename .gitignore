@@ -2,10 +2,8 @@ node_modules/
 .claude/settings.local.json
 .DS_Store
 
-# Presentation build scripts and their npm files stay local (needed to
-# regenerate the deck/thumbnail) but aren't presentation deliverables
-# themselves, so they don't get pushed to GitHub.
-presentation/generate-slides.js
-presentation/generate-thumbnail.js
-presentation/package.json
-presentation/package-lock.json
+# Presentation: only the finished deck is a repo deliverable. Everything
+# else (build scripts, source markdown, thumbnails, node_modules) stays
+# local only, needed just to regenerate the deck.
+presentation/*
+!presentation/SpecDrivenDevelopment.pptx
