@@ -1,215 +1,264 @@
 ---
-title: Spec-Driven Development with GitHub Spec-Kit — A Conceptual Primer
-category: Conceptual / Engineering Process
-categoryBadge: SPEC-DRIVEN DEV
-tagline: Decide once, in writing, before you type a single line of code.
-accentHex: 00b4cc
-paletteName: Cyan Matrix (dark theme, near-black teal background, electric cyan accent, aqua code highlights)
-fontPersonality: technical (Arial titles + Consolas code)
+accentColor: "#1d6fbc"
+paletteName: "Ocean Slate Light"
+fontPersonality: professional
 presentationType: design-pattern
-audience: team-knowledge-share
+audience: conference-meetup
 depth: high-level
 ---
 
 ## Slide 1 — Spec-Driven Development with GitHub Spec-Kit
 **Layout:** default
-**Visual:** Title card — topic name large and centered, category badge "SPEC-DRIVEN DEV" pinned top-right, tagline beneath the title in the accent cyan.
-**Speaker notes:** This is the conceptual primer that runs immediately before a live terminal demo. Nothing here is abstract theory disconnected from practice — every command named in this deck is about to be typed for real, from an empty repo, right after this.
-- Spec-Driven Development with GitHub Spec-Kit: A Conceptual Primer
-- Category: Conceptual / Engineering Process
-- "Decide once, in writing, before you type a single line of code."
-- Up next after this deck: a live build of a URL shortener, from zero
+**Visual:** Title slide. Category badge "WORKFLOW" top-left. Title centered. Tagline beneath.
+**Speaker notes:** Open with energy — this is a pattern talk, not a system-design talk. There's no running app to architect here; the URL shortener is just the example feature name that makes the six commands concrete.
+- Category: Development Workflow / AI-Assisted Engineering
+- Tagline: "Constitution to code: six commands, zero improvisation"
+- Running example (illustrative only): a URL shortener — submit a long URL, get a short code back
 
-## Slide 2 — The Problem: What Vibe-Coding Produces
+---
+
+## Slide 2 — The Problem: Prompt and Hope
 **Layout:** default
-**Visual:** Full-width bullet list, muted red/orange accent on the pain-point bullets to contrast with the deck's cyan.
-**Speaker notes:** Frame this as a fair description of how most of us build things day to day, not a strawman. One-shot prompting works, and it's fast — the point isn't that it's wrong, it's that it's silent about its own decisions.
-- One-shot prompting: describe a feature in a sentence or two, get a working app back
-- Implicit decisions get baked in with no record of them — naming conventions, error shapes, edge-case handling, all decided invisibly, inside a single generation pass
-- Inconsistent naming and error shapes across a codebase, because there was never one upstream decision they both trace back to
-- No paper trail: ask "why is it built this way" six weeks later, and nobody — including the original author — can answer with anything but a guess
+**Visual:** Plain bullet list, no jargon yet
+**Speaker notes:** Land the pain before naming the solution. Everyone in a conference room has felt this: an AI agent that produces something plausible-looking with no way to explain a single choice it made.
+- You type one big prompt, the agent writes a feature, it runs — great, for about ten minutes
+- Two weeks later: why is storage a global mutable object? Why is the code 8 characters, not 6? Nobody knows — there's no artifact, only chat scrollback
+- Ask two different people to prompt the same agent for the same feature and you get two different implementations, with two different unwritten assumptions baked in
+- The problem isn't the AI — it's that nothing was decided *before* the code, so nothing can be checked *after* it
 
-## Slide 3 — What Is Spec-Driven Development?
+---
+
+## Slide 3 — What Spec-Driven Development Is
 **Layout:** default
-**Visual:** One-liner definition banner at top, four-item list below mapping question to artifact.
-**Speaker notes:** This is the category the rest of the deck lives in — a discipline, not a specific tool, though we're going to walk it through GitHub's spec-kit implementation of it. The core move is sequencing: nothing downstream gets written until everything upstream of it exists.
-- One-liner: a discipline that separates *why*, *what*, *how*, and *order* into distinct, written artifacts — all produced before any implementation code exists
-- Why → constitution: the non-negotiable principles
-- What → spec: the requirements and user stories, in testable language
-- How → plan: the technical design, gated against the constitution
-- Order → tasks: a dependency-ordered checklist the implementation just executes
+**Visual:** One-liner definition, then a 2-column table mapping each question (why/what/how/order) to its artifact
+**Speaker notes:** Give the audience the one-sentence definition they'll repeat later, then walk the table top to bottom — this is the single clearest map of the whole pipeline onto four questions. Mention the skill mechanic briefly — it lands better once the pipeline is on screen.
+- **Spec-Driven Development (SDD):** a discipline that separates why, what, how, and order into distinct, written artifacts — all produced before any implementation code exists
 
-## Slide 4 — The Pipeline: Five Core Commands
+| Question | Artifact |
+|---|---|
+| Why | **constitution** — the non-negotiable principles |
+| What | **spec** — the requirements and user stories, in testable language |
+| How | **plan** — the technical design, gated against the constitution |
+| Order | **tasks** — a dependency-ordered checklist the implementation just executes |
+
+- GitHub Spec-Kit is one concrete implementation of this pattern: six slash-commands, run in a fixed order, one Claude Code skill per command
+
+---
+
+## Slide 4 — [The Pipeline]
 **Layout:** section-break
-**Visual:** Large centered section title, subtitle "constitution → specify → plan → tasks → implement"
-**Speaker notes:** Five commands, one direction, each one reading what the last one wrote.
+**Visual:** Large centered section title "The Pipeline" with subtitle "Six commands, one direction"
+**Speaker notes:** Transition into the mechanics — how the six commands actually chain together.
 
-## Slide 5 — The Pipeline at a Glance
+---
+
+## Slide 5 — Six Commands, One Direction
 **Layout:** diagram
-**Visual:** Horizontal pipeline diagram — six boxes left to right, arrows between each, artifact name labeled under every box.
+**Visual:** Horizontal flow of the six commands with one annotated branch point
+**Speaker notes:** Walk the pipeline left to right. The one thing worth pausing on: there is exactly one place a "go back and revise" branch can happen, and it's buried inside the plan step, not scattered everywhere.
+
+```text
+specify init --> /speckit-constitution --> /speckit-specify --> /speckit-plan --> /speckit-tasks --> /speckit-implement
+                                                                       |
+                                                            [Constitution Check: PASS/FAIL]
 ```
-[specify init]  →  /speckit-constitution  →  /speckit-specify  →  /speckit-plan  →  /speckit-tasks  →  /speckit-implement
-  (scaffolding,        constitution.md          spec.md          plan.md +          tasks.md            working code
-   zero content)                                                 research.md,
-                                                                  data-model.md,
-                                                                  contracts/
-```
-**Speaker notes:** `specify init` is step zero — it scaffolds the machinery (a memory directory, per-command skill files) and writes zero actual content: no spec, no code, just the harness the rest of the pipeline runs inside. Everything after that is one of the five core commands, each command reading what the previous one wrote before it writes anything of its own.
-- One direction only — plan can't contradict constitution, tasks can't invent scope the spec didn't authorize
-- Each arrow is a real file dependency, not just a suggested order
-- By the time `/speckit-implement` runs, every decision has already been made and written down somewhere upstream
+- `specify init` scaffolds a constitution *template* (full of `[BRACKET_PLACEHOLDER]` tokens) and a set of skills — writes zero feature content, pure setup
+- Each command is a Claude Code skill: a `SKILL.md` file of plain-language instructions the agent follows — "a playbook, not a program"
+- Only `/speckit-plan` has a hard gate; everything else just flows forward, file to file
+- On this URL-shortener example, the whole sequence — constitution through a working `curl` call — runs in about 35 minutes, start to finish
 
-## Slide 6 — /speckit-constitution — Why, First and Non-Negotiable
+---
+
+## Slide 6 — specify init
 **Layout:** default
-**Visual:** Bullet list with a small "reads / writes" label pair at top.
-**Speaker notes:** This is the one document nothing else in the pipeline is allowed to contradict — every later command checks its output against this file before doing anything else. On a real project the principles are yours to set; here's a plausible, unglamorous set for a small demo feature.
-- Reads: nothing — this is the first command run, typically against a near-empty repo
-- Writes: `constitution.md` — the project's non-negotiable principles
-- Example principles for a small feature: **Simplicity First** (smallest implementation that satisfies the spec, no speculative abstraction), **Testable Requirements** (every requirement can pass or fail, not "should probably"), **Illustrative Not Production** (in-memory storage is fine, this is a teaching example, not a shipped service)
-- Why it exists: it's the fixed point everything downstream is checked against
+**Visual:** Plain bullet list — the command itself as a one-line sample
+**Speaker notes:** The first step is deliberately boring — it's worth saying out loud that nothing about the actual feature exists yet after this command runs.
+- Reads: nothing — there's no prior artifact yet; this is the very first step
+- Writes: a `.specify/` folder structure and a skill file for each of the six commands
+- Also writes a constitution *template*, full of `[BRACKET_PLACEHOLDER]` tokens — not real principles yet
+- Writes zero feature content — no spec, no plan, no code; pure scaffolding
 
-## Slide 7 — /speckit-specify — What, in Testable Language
-**Layout:** default
-**Visual:** Bullet list with a small "reads / writes" label pair at top.
-**Speaker notes:** This is where requirements get numbered the moment they're written — not retrofitted later for a postmortem, assigned live as the spec is drafted. No framework names, no schema, no implementation language allowed in this artifact at all.
-- Reads: `constitution.md`
-- Writes: `spec.md` — user stories (each with a priority, P1/P2/P3, and an Independent Test: "would this story alone still be useful if shipped by itself?"), FR-### functional requirements, SC-### success criteria
-- Why: forces the "what" into testable, numbered language before anyone touches "how"
-- FR-### IDs get assigned the instant a requirement is written — that ID is going to reappear in the plan, the tasks, and eventually a code comment
-
-## Slide 8 — /speckit-plan — How, Gated by the Constitution
-**Layout:** default
-**Visual:** Bullet list with a small "reads / writes" label pair at top.
-**Speaker notes:** This is the only command with a hard gate — the design gets checked against the constitution before research starts, and again after. If a plan fails that check, it gets revised before it's allowed to become tasks, not after code has already been written against it.
-- Reads: `spec.md`, `constitution.md`
-- Writes: `plan.md` (with a **Constitution Check** table — every principle gets a PASS/FAIL verdict), `research.md` (Decision / Rationale / Alternatives considered, per technical choice — e.g., short-code generation: random string vs. incrementing counter vs. hash), `data-model.md`, `contracts/`
-- Why: this is where "how" gets decided — and justified, in writing, before a line of code exists
-- Technology choices get made once, here, not improvised per-route later
-
-## Slide 9 — /speckit-tasks — Order, Dependency-Mapped
-**Layout:** default
-**Visual:** Bullet list with a small "reads / writes" label pair at top.
-**Speaker notes:** This is the last artifact before code — a literal checklist, not a vague plan of attack. Every task is tagged with the user story it belongs to, so you can always answer "why does this task exist" by pointing at a US# and, behind it, an FR-###.
-- Reads: `plan.md`, `spec.md`
-- Writes: `tasks.md` — phased (Setup, Foundational/blocking, one phase per user story, Polish), dependency-ordered checklist
-- `[P]` marks tasks that are parallelizable; `[US1]` / `[US2]` labels tie every task back to the story it satisfies
-- Why: turns "how" into an explicit, ordered execution plan an agent — or a human — can just follow top to bottom
-
-## Slide 10 — /speckit-implement — Execute, Top to Bottom
-**Layout:** default
-**Visual:** Bullet list with a small "reads / writes" label pair at top.
-**Speaker notes:** By design, this is the least interesting command in the pipeline to talk about — and that's the entire point. All the hard thinking already happened in the four commands before it; this one just works the checklist.
-- Reads: `tasks.md` (and everything upstream, by reference)
-- Writes: the actual source code
-- Executes `tasks.md` phase by phase, checking off each box — `[ ]` becomes `[X]` — as it completes it, not from memory, from a passing check right now
-- Why it's boring on purpose: every naming decision, every error shape, every technology choice was already made and written down before this command ever ran
-
-## Slide 11 — Traceability: IDs That Don't Die at Handoff
-**Layout:** two-column
-**Visual:** Left column — the ID-flow chain from requirement to code comment. Right column — annotated bullets and the real grep proof.
-```
-spec.md            plan.md / tasks.md          src/
-US1, FR-001,   →    data-model.md refs      →   // FR-001: ...
-SC-001              FR-001; T003 [US1]          (a real line, not a comment
-                                                  written after the fact)
-```
 ```bash
-grep -rn "FR-" src/
-# → every requirement ID sitting in a code comment
-#   at the exact line that satisfies it
+uvx --from git+https://github.com/github/spec-kit.git specify init --here --integration claude
 ```
-**Speaker notes:** This is the throughline that makes every earlier slide more than paperwork. The IDs aren't assigned retroactively for documentation's sake — they're assigned the moment a requirement or task is written, and they ride all the way down into the implementation.
-- FR-### and SC-### are born in `spec.md`; US# tags a user story; T### tags a task in `tasks.md`
-- Every ID threads spec → plan → tasks → a literal code comment at the line that satisfies it
-- Concretely, once implementation is done: `grep -rn "FR-" src/` — that's the cheapest possible demo of "the code traces back to a decision," and it's real output, not a diagram
+- Why it exists: every other command in this pipeline assumes this folder structure and these skills are already in place
 
-## Slide 12 — Key Insight
-**Layout:** callout
-**Visual:** Single bold statement, centered, large type.
-**Speaker notes:** If your team remembers one thing about spec-driven development, make it this — everything else in the pipeline exists to make sure these IDs mean something by the time they hit a code comment.
-- The traceability IDs are the load-bearing wall. Constitution, spec, plan, and tasks are scaffolding built to make sure an FR-### number means the same thing in the requirement, the design, the checklist, and the code.
+---
 
-## Slide 13 — Optional Rigor & Team Scale
-**Layout:** section-break
-**Visual:** Large centered section title, subtitle "Five more commands, and what happens past one person"
-**Speaker notes:** Everything so far is the required backbone. What follows is optional rigor for a solo pass, and load-bearing once more than one person is involved.
-
-## Slide 14 — Five Enhancement Commands, One Line Each
-**Layout:** default
-**Visual:** Table — command name, one-line purpose.
-**Speaker notes:** None of these are required for a solo, single-session build like the one you're about to watch — but each one earns its keep the moment a team, a deadline, or an ambiguous spec is in the picture.
-- `/speckit-clarify` — asks up to five targeted questions and writes the answers directly back into `spec.md`, so the resolution is part of the permanent record, not a Slack thread nobody can find later
-- `/speckit-checklist` — a unit test for the spec's *writing*, not the code: checks things like "is `short code` ever quantified — letters-only? a length?" before ambiguity becomes a coding decision made under pressure
-- `/speckit-analyze` — read-only; cross-checks spec, plan, and tasks against each other and against the constitution before any code exists
-- `/speckit-converge` — compares what the spec/plan/tasks call for against what the code *actually does right now* — current state, not git history, not memory — and appends a new task if it finds drift
-- `/speckit-taskstoissues` — exports `tasks.md` into tracked issues for teams that live in an issue tracker rather than a checklist file
-
-## Slide 15 — Teaser: This Doesn't Stay Solo
-**Layout:** default
-**Visual:** Full-width bullet list.
-**Speaker notes:** Deliberately brief — this is a name-drop, not a walkthrough. The live demo you're about to watch is the single-person, single-branch version of this process; it's worth seeing once before you see what changes when a team runs it in parallel.
-- Everything up to this slide assumes one person, one branch, one pass through the pipeline
-- At team scale: concurrent branches each running their own spec-kit pipeline, a constitution amendment landing mid-project that ripples into specs already in flight, real merge conflicts — in `plan.md` and `tasks.md`, not just source code
-- Not covered in depth here — that's a separate repo, `speckit-complex-demo`: three contributors, concurrent branches, a constitution amendment mid-project, and two real merge conflicts
-- Today's demo is the on-ramp version — worth running once solo before you watch the team-scale one
-
-## Slide 16 — When to Use / When Not to Use
+## Slide 7 — /speckit-constitution
 **Layout:** two-column
-**Visual:** Left column: "When to Use." Right column: "When Not To."
-**Speaker notes:** The trade-off isn't "always spec-driven" — it's matching the ceremony to the stakes. A one-off spike doesn't need a constitution; a feature that will get asked about in a postmortem does.
-- **When to use it:** production features with real stakeholders; cross-team surfaces where naming and contracts matter; anything you'll have to explain to someone else in six months; features where "why did we do it this way" will get asked in a postmortem — or an interview
-- **When not to use it:** true throwaway prototypes and spikes; single-file scripts nobody else will ever touch; exploratory work where you genuinely don't know yet if you're keeping it; situations where the ceremony costs more than the wrong shortcut would
+**Visual:** Left: real excerpt from `constitution.md`. Right: what it reads, what it writes, and why it exists.
+**Speaker notes:** This is the first command that writes real content. It reads nothing — there's nothing upstream of it — and everything downstream reads it first.
 
-## Slide 17 — Spec-Driven Dev vs. Vibe-Coding
+```text
+### I. Simplicity & Legibility (NON-NEGOTIABLE)
+Every artifact in this repository — constitution, spec, plan, tasks, and code — MUST be
+readable in a single pass by someone who has never seen spec-kit before.
+
+### IV. Traceability From Spec to Code
+Every meaningful implementation decision in `spec-driven/` MUST be traceable back to a
+line in `spec.md`, `plan.md`, or `tasks.md`. If code does something the specs don't
+explain, either the code or the specs are wrong.
+```
+- Reads: nothing — it's the first content-bearing command in the pipeline
+- Writes: `constitution.md` — the project's non-negotiable rules
+- Why: every later command (spec, plan, tasks, implement) reads this exact file before doing anything else — it's the constraint every design gets checked against
+
+---
+
+## Slide 8 — What's a Principle vs. an Implementation Choice?
 **Layout:** default
-**Visual:** Comparison table, five rows.
-**Speaker notes:** This is exactly what a sibling reference repo, `speckit-demo`, shows side-by-side — a `vibe-coded/` folder and a `spec-driven/` folder for the same feature, built both ways, so you can diff them directly instead of taking this table's word for it.
-| Dimension | Vibe-Coding (one-shot prompting) | Spec-Driven Development |
+**Visual:** Plain bullet list contrasting a real principle with the real implementation choice that satisfies it
+**Speaker notes:** The single clearest concept slide in this deck — worth slowing all the way down for, especially for anyone who's never opened a spec-kit repo before.
+- A **PRINCIPLE** is a non-negotiable, project-wide rule that constrains every later decision — it doesn't say what to build, it says what's off-limits or required, no matter what gets built
+- An **IMPLEMENTATION CHOICE** is a specific technical decision made later that must satisfy the principles — but isn't itself a principle
+- Real contrast from this exact demo — constitution, Principle V: "**Minimal Dependencies** — use vanilla JavaScript with Express only."  ← the PRINCIPLE
+- `plan.md`, Technical Context: "**Primary Dependencies**: Express 4.x... per constitution Principle V"  ← the IMPLEMENTATION CHOICE that satisfies it
+- Notice the principle never says "Express" — it only rules out everything except "minimal." The plan is where "minimal" becomes one specific, named choice
+- Rule of thumb: if the same rule could hold across ten totally different features, it's a principle; if it's the specific thing picked for *this* feature, it's an implementation choice
+
+---
+
+## Slide 9 — /speckit-specify
+**Layout:** two-column
+**Visual:** Left: real excerpt from `spec.md`. Right: what it reads, what it writes, and why it exists.
+**Speaker notes:** Third command — the constitution constrains what a requirement is even allowed to look like before this one gets typed.
+
+```text
+### User Story 1 - Add a task and see it in the list (Priority: P1)
+A user wants to capture something they need to do, then confirm it was recorded.
+**Independent Test**: Can be fully tested by adding a task and then retrieving
+the list, and confirming the new task appears with the description provided.
+```
+- Reads: `constitution.md` — every requirement has to fit inside those non-negotiables
+- Writes: `spec.md` — prioritized user stories (P1/P2/P3), each with acceptance scenarios and an Independent Test
+- Why: turns a one-line feature idea into a checkable, prioritized breakdown before anyone designs a single endpoint
+
+---
+
+## Slide 10 — /speckit-plan
+**Layout:** two-column
+**Visual:** Left: real excerpt from `plan.md`'s Constitution Check. Right: what it reads, what it writes, and why it exists.
+**Speaker notes:** The one command in the pipeline with a hard gate — worth pausing on, since it's the single branch point in an otherwise straight line.
+
+```text
+## Constitution Check
+- **I. Simplicity & Legibility**: PASS — four small files total, plain Express
+  routing, no framework magic or generated boilerplate.
+- **V. Minimal Dependencies**: PASS — `express` is the only runtime dependency;
+  no test framework, no build step, no TypeScript.
+```
+- Reads: `spec.md` and `constitution.md`
+- Writes: `plan.md`, plus supporting `research.md`, `data-model.md`, and `contracts/`
+- Why: every principle gets graded PASS or FAIL against the actual design — once before research, once after — before anyone moves on to tasks
+
+---
+
+## Slide 11 — /speckit-tasks
+**Layout:** two-column
+**Visual:** Left: real excerpt from `tasks.md`. Right: what it reads, what it writes, and why it exists.
+**Speaker notes:** Fifth command — turns a design into something an agent, or a human, can literally check off one box at a time.
+
+```text
+## Phase 1: Setup
+- [X] T001 Create `spec-driven/` directory with a `src/` and `src/routes/` subfolder
+- [X] T002 Initialize `spec-driven/package.json` with `express` as the only dependency
+```
+- Reads: `plan.md` and `spec.md`
+- Writes: `tasks.md` — a phased, dependency-ordered checklist, grouped by user story
+- Why: it's the difference between "we designed something" and "here is the exact order to build it in"
+
+---
+
+## Slide 12 — /speckit-implement
+**Layout:** default
+**Visual:** Plain bullet list — the checkbox-flip idea as the "sample"
+**Speaker notes:** Last command, and mechanically the simplest — by the time this runs, almost every real decision was already made upstream.
+- Reads: `tasks.md` — and everything upstream by reference, since every task traces back to the plan, spec, and constitution
+- Writes: the actual source code — the only command in this pipeline that produces working software
+- Executes `tasks.md` phase by phase, flipping each box from `[ ]` to `[X]` as the task completes
+- Why: there's almost nothing left to improvise at this point — every earlier command already decided what to build and why
+- The real generated code from this exact run lives in `~/speckit-demo/spec-driven/`, if you want to look afterward
+
+---
+
+## Slide 13 — Key Concept: The Traceability Spine
+**Layout:** two-column
+**Visual:** Left: one real requirement ID (FR-001) traced through three real files from `~/speckit-demo`'s actual generated Task List API. Right: what that proves and why it matters.
+**Speaker notes:** This is the payoff concept — the thing that turns "we wrote some docs" into "we can prove the code matches the docs." Walk this as one concrete story, not four abstract bullet points: one requirement, born in one file, ends up as one comment sitting directly above the code that satisfies it. This is real content from a real generated repo, not a hypothetical.
+
+```text
+spec.md
+FR-001: System MUST allow a user to
+add a new task with a non-empty
+description.
+
+tasks.md
+T006 [US1] POST /tasks: reject 400
+when description is missing/empty
+(FR-001, FR-006)
+
+routes/tasks.js
+// FR-001, FR-002, FR-006
+router.post('/', (req, res) => {
+  if (!description.trim())
+    return res.status(400)...
+```
+- `FR-001` is born in `spec.md` as one plain-English rule — nothing about HTTP or JavaScript yet
+- `tasks.md` turns it into an actual build step, still citing `FR-001` by name
+- The generated code carries the same `FR-001` as a comment, directly above the `if` statement that enforces it
+- Follow the ID and you can point at the exact line of running code that a one-sentence requirement turned into
+
+---
+
+## Slide 14 — Why This Matters: Closing the Loop
+**Layout:** callout
+**Visual:** Explicit callback to the opening problem, then the resolution, then the concrete payoff
+**Speaker notes:** This slide only lands if the audience remembers the opening problem — say it out loud again before revealing the punchline. This is the moment the whole talk has been building to: the opening complaint about vibe-coding gets an actual mechanical answer, not just a process that feels more organized.
+
+> Remember the opening problem with vibe-coding: nobody can check *why* the code is built a certain way, because nothing was written down to check it against.
+>
+> An `FR-###` ID is how SDD closes that exact gap. It isn't documentation — documentation can be wrong, stale, or unread, and nobody notices. It's a **promise**: a claim specific enough that `grep -rn "FR-" src/` either finds it satisfied in the code, or it doesn't. There's no third answer, and no one has to trust anyone's memory.
+>
+> Concretely: `FR-001` promised "a non-empty description is required." The check enforcing that sits right under the `// FR-001` comment in `routes/tasks.js` — so the promise isn't just made, it's verifiable, by anyone, at any time, with one command.
+
+---
+
+## Slide 15 — Spec-Driven Development vs. Vibe-Coding
+**Layout:** default
+**Visual:** Comparison table
+**Speaker notes:** Vibe-coding — prompt an AI once and hope — isn't a strawman, it's the default most people are already doing. This table is the honest trade-off, not a case for SDD always winning.
+
+| Dimension | Vibe-Coding | Spec-Driven Development |
 |---|---|---|
-| Decision record | None | `constitution.md`, `research.md` |
-| Requirement traceability | None | FR-###/SC-###/US#/T### → code comment |
-| Time to first working code | Fastest | Slower up front |
-| Consistency across the codebase | Depends entirely on the prompt | Enforced by the constitution gate |
-| Auditability six weeks later | Approximately none | Every decision has a written rationale |
+| Speed to first line of code | Fastest — one prompt | Slower — four artifacts come first |
+| Traceability | None — decisions live in chat scrollback | Every requirement carries an `FR-###` ID into the code |
+| Team scale | Breaks down fast — every session reinvents assumptions | Shared constitution + spec are the source of truth |
+| Revisability | Re-prompt and hope it's consistent this time | Amend the constitution, re-run the plan's gate |
+| Best for | Spikes, exploration, throwaway scripts | Long-lived features, multi-person or multi-session work |
 
-## Slide 18 — Real-World Analogies
+---
+
+## Slide 16 — Five Enhancement Commands, One Line Each
 **Layout:** default
-**Visual:** Three short analogy blocks, full width.
-**Speaker notes:** These map cleanly onto the four artifacts and are worth having in your back pocket the next time someone asks why this is worth the extra ceremony.
-- A building's **code** (fire code, load limits) is the constitution — nobody argues with it mid-construction, the whole design is drawn to satisfy it first
-- A negotiated **contract's terms** are the spec — everyone agreed to them, in writing, before anyone signed
-- An assembly line's **work-instruction sheet** is `tasks.md` — order and dependencies already resolved before anyone picks up a tool
+**Visual:** Two-column table — command name, one-line purpose
+**Speaker notes:** None of these five are needed for a single solo pass like the one this talk has walked through — they're optional rigor that earns its keep once a team, a deadline, or an ambiguous spec is in the picture. Say that plainly so the audience doesn't think they missed something required.
+- Beyond the six required commands, spec-kit ships five optional enhancement commands
 
-## Slide 19 — Summary: Three Takeaways
-**Layout:** callout
-**Visual:** Three numbered statements, large centered type.
-**Speaker notes:** If you only keep three things from this deck before we go type commands for real, make it these.
-- 1. Decide once, in writing, before you type a single line of code — why, what, how, and order each gate the next
-- 2. Traceability IDs aren't documentation-as-an-afterthought — they're a literal, greppable line in the code that closes the loop back to a requirement
-- 3. Solo usage is the on-ramp — team-scale usage (concurrent branches, mid-project constitution amendments, real merge conflicts) is what `speckit-complex-demo` covers next
+| Command | Purpose |
+|---|---|
+| `/speckit-clarify` | Asks up to five targeted questions and writes the answers directly back into `spec.md` — part of the permanent record |
+| `/speckit-checklist` | A unit test for the spec's writing: checks for unquantified terms before ambiguity becomes a coding decision made under pressure |
+| `/speckit-analyze` | Read-only; cross-checks spec, plan, and tasks against each other and against the constitution before any code exists |
+| `/speckit-converge` | Compares what spec/plan/tasks call for against what the code actually does right now, and appends a task if it finds drift |
+| `/speckit-taskstoissues` | Exports `tasks.md` into tracked issues for teams that live in an issue tracker rather than a checklist file |
 
-## Slide 20 — Live Demo: The Numbers
-**Layout:** stats
-**Visual:** Four large stat blocks.
-**Speaker notes:** These are real figures from the facilitation guide for this exact workshop, not invented — they're what you should expect to see over the next stretch of the session. No optional branches this time: six commands, each scripted with its exact arguments in advance, nothing left to decide live.
-- ~35 min, start to finish — six commands, nothing optional
-- 6 commands: `specify init` → constitution → specify → plan → tasks → implement
-- 1 entity, 2 endpoints — the entire scope of the demo feature
-- 0 live decisions — every command and its exact arguments scripted in advance
+---
 
-## Slide 21 — Up Next: Live Demo
+## Slide 17 — Resources & Next Steps
 **Layout:** default
-**Visual:** Full-width bullet list with the command sequence as a terminal block at the bottom.
-**Speaker notes:** This is the handoff slide — everything from here happens live, in a terminal, from an empty repo. The feature is deliberately small: one entity, two endpoints, so the process is the star of the demo, not the feature itself.
-- Feature: a URL shortener — submit a long URL, get a short code back; visiting the short code redirects to the original. In-memory storage, no auth, no analytics, no link expiration for v1
-- Starting point: this repo, intentionally almost empty — a starting line, not a finished demo
-- Reference repos for later, self-guided study: `speckit-demo` (one feature, vibe-coded vs. spec-driven, side-by-side) and `speckit-complex-demo` (team scale, concurrent branches, constitution amendments, real merge conflicts)
-- The payoff moment at the end: a live `curl` against the running service, proving the checked boxes in `tasks.md` are real, not decorative
-```bash
-specify init
-/speckit-constitution
-/speckit-specify
-/speckit-plan
-/speckit-tasks
-/speckit-implement
-```
+**Visual:** Plain bullet list of follow-on material
+**Speaker notes:** Send the audience somewhere concrete instead of ending on a slogan.
+- `speckit-demo` — one feature, one person, a `vibe-coded/` vs. `spec-driven/` side-by-side you can browse
+- `speckit-complex-demo` — three contributors, concurrent branches, a mid-project constitution amendment, two real merge conflicts
+- `FACILITATION.md` in this repo — the exact live run-of-show, every command typed out, if you want to run this pipeline yourself from zero
