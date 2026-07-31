@@ -16,7 +16,11 @@ Total time: roughly 35 minutes.
 - [ ] This directory is otherwise empty except this guide, `README.md`, and
       `presentation/` — confirm with `find . -not -path './.git*' -not -path
       './presentation*' -type f` before you start talking; if it isn't
-      empty, something from a rehearsal run got left behind.
+      empty, something from a rehearsal run got left behind. Check
+      specifically for a stray `node_modules/` — it's gitignored, so a plain
+      `git clean` from a prior rehearsal leaves it behind even after
+      `package.json` and everything else is gone. Remove it (`rm -rf
+      node_modules`) if found.
 - [ ] Font size big enough for the back row. Terminal and editor both.
 - [ ] Know your fallback: if live coding hits a snag, `speckit-demo` and
       `speckit-complex-demo` are finished repos you can pivot to showing
@@ -161,10 +165,15 @@ bottom, checking boxes as it goes."
 **Say**: "Now it works through tasks.md exactly as written, phase by phase,
 checking off each box as it finishes it."
 
-**After it completes, run the app and prove it live**:
+**After it completes**: confirm `tasks.md` shows every box checked before
+moving on — if `/speckit-implement` stopped early (checklist gate, error,
+context limit), `package.json` may not exist yet and `npm start` will fail
+with an ENOENT on `package.json`.
+
+**Then run the app and prove it live**:
 
 ```bash
-npm start &
+ls package.json && npm install && npm start &
 ```
 
 ```bash
